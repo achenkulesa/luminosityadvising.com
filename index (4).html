@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luminosity Advising — Amy Chen Kulesa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #FFFFFF;
+      --off-white: #F7F7F5;
+      --rule: #E2E2DC;
+      --blue-deep: #152E58;
+      --blue-mid: #1E4A8C;
+      --blue-light: #E8EFF9;
+      --gold: #E6AC20;
+      --gold-bright: #F0BE3A;
+      --ink: #111111;
+      --mid: #444444;
+      --muted: #888888;
+      --serif: 'DM Serif Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--white);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .star-icon {
+      display: inline-block;
+      width: 11px;
+      height: 18px;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4rem;
+      height: 64px;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--rule);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 20px rgba(21,46,88,0.08); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--blue-deep);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.25rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 2px;
+      background: var(--gold);
+      transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .nav-links a.nav-active { color: var(--blue-deep); }
+    .nav-links a.nav-active:not(.nav-cta)::after { width: 100%; }
+    .nav-links a:hover { color: var(--blue-mid); }
+
+    .nav-cta {
+      background: var(--blue-deep) !important;
+      color: var(--white) !important;
+      padding: 0.5rem 1.25rem !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: var(--blue-mid) !important; color: var(--white) !important; }
+
+    /* HERO */
+    #home {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 64px 4rem 0;
+      overflow: hidden;
+      background: var(--blue-deep);
+    }
+
+    #hero-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      display: block;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 5rem 0;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em { font-style: italic; color: var(--gold-bright); }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.85;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 2rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-gold { background: var(--gold); color: var(--blue-deep); }
+    .btn-gold:hover { background: var(--gold-bright); transform: translateY(-1px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--white);
+      border: 1.5px solid rgba(255,255,255,0.35);
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); transform: translateY(-1px); }
+
+    /* SECTIONS */
+    section { padding: 7rem 4rem; }
+    .inner { max-width: 1080px; margin: 0 auto; }
+
+    .label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-rule {
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      margin-bottom: 1.5rem;
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .section-rule.visible { width: 52px; }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 400;
+      color: var(--blue-deep);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title em { font-style: italic; }
+
+    /* ABOUT */
+    #about { background: var(--white); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 4rem;
+      align-items: start;
+      margin-top: 3rem;
+    }
+
+    .photo-frame { position: relative; flex-shrink: 0; }
+
+    .photo-frame img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: top center;
+      aspect-ratio: 4/5;
+    }
+
+    .photo-frame::after {
+      content: '';
+      position: absolute;
+      bottom: -10px; right: -10px;
+      width: 60%; height: 45%;
+      border: 2px solid var(--gold);
+      z-index: -1;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .photo-frame:hover::after { transform: translate(4px, 4px); }
+
+    .about-text p {
+      font-size: 0.97rem;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.9;
+      margin-bottom: 1.2rem;
+    }
+
+    .about-text p:first-child {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      color: var(--ink);
+      font-weight: 400;
+      line-height: 1.65;
+      margin-bottom: 1.4rem;
+    }
+
+    .bio-link {
+      color: var(--blue-mid);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(39,85,160,0.3);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .bio-link:hover { color: var(--blue-deep); border-color: var(--blue-deep); }
+
+    /* SERVICES */
+    #services { background: var(--off-white); }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .service-card {
+      background: var(--white);
+      border: 1px solid var(--rule);
+      padding: 2.25rem 2rem;
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.25s, border-color 0.25s;
+    }
+
+    .service-card.visible { opacity: 1; transform: translateY(0); }
+
+    .service-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 8px 32px rgba(21,46,88,0.09);
+      transform: translateY(-3px) !important;
+    }
+
+    .service-accent {
+      width: 28px;
+      height: 3px;
+      background: var(--gold);
+      margin-bottom: 1.5rem;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .service-card:hover .service-accent { width: 48px; }
+
+    .service-card h3 {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--blue-deep);
+      margin-bottom: 0.85rem;
+      line-height: 1.3;
+    }
+
+    .service-lead {
+      font-size: 0.92rem;
+      color: var(--ink);
+      line-height: 1.78;
+      margin-bottom: 1rem;
+    }
+
+    .service-detail {
+      font-size: 0.84rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.72;
+      font-style: italic;
+    }
+
+    /* WRITING */
+    #writing { background: var(--white); }
+
+    .writing-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 3rem;
+    }
+
+    .writing-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+      align-items: start;
+      padding: 2rem 0;
+      border-top: 1px solid var(--rule);
+      text-decoration: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .writing-item:last-child { border-bottom: 1px solid var(--rule); }
+    .writing-item.visible { opacity: 1; transform: translateY(0); }
+
+    .writing-item:hover .writing-item-title { color: var(--blue-mid); }
+    .writing-item:hover .writing-arrow { color: var(--blue-mid); transform: translateX(4px); }
+
+    .writing-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .writing-pub {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .writing-date {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .writing-item-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--blue-deep);
+      line-height: 1.35;
+      margin-bottom: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .writing-desc {
+      font-size: 0.875rem;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.7;
+    }
+
+    .writing-arrow {
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: color 0.2s, transform 0.2s;
+      white-space: nowrap;
+      padding-top: 0.25rem;
+    }
+
+    /* CONTACT */
+    #contact {
+      background: var(--blue-deep);
+      padding: 6rem 4rem;
+      text-align: center;
+    }
+
+    #contact .inner { max-width: 780px; }
+    #contact .label { justify-content: center; color: var(--gold-bright); }
+    #contact .section-rule { margin: 0 auto 1.5rem; }
+    #contact .section-title { color: var(--white); }
+
+    .contact-body {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.85;
+      margin-bottom: 2.25rem;
+    }
+
+    .contact-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .contact-icon-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border: 1.5px solid rgba(240,190,58,0.4);
+      color: var(--gold-bright);
+      border-radius: 50%;
+      transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.25s;
+    }
+
+    .contact-icon-link svg { width: 22px; height: 22px; }
+
+    .contact-icon-link:hover {
+      background: rgba(240,190,58,0.12);
+      border-color: var(--gold-bright);
+      color: var(--white);
+      transform: translateY(-3px);
+    }
+
+    /* FOOTER */
+    footer {
+      background: #0C1B33;
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .foot-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .foot-copy { font-size: 0.75rem; color: rgba(255,255,255,0.28); }
+
+    /* SCROLL ANIMATIONS */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    .fade-left {
+      opacity: 0;
+      transform: translateX(-36px);
+      transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .fade-left.visible { opacity: 1; transform: translateX(0); }
+
+    .fade-right {
+      opacity: 0;
+      transform: translateX(36px);
+      transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .fade-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      nav { padding: 0 1.5rem; }
+      section { padding: 5rem 1.5rem; }
+      #contact { padding: 5rem 1.5rem; }
+      footer { padding: 1.75rem 1.5rem; }
+      #home { padding: 64px 1.5rem 0; }
+      .about-grid { grid-template-columns: 1fr; }
+      .photo-frame { max-width: 220px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .writing-item { grid-template-columns: 1fr; }
+      .writing-arrow { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="main-nav">
+    <a class="nav-logo" href="#home">
+      <svg class="star-icon" viewBox="0 0 62 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M31 0 C31 0 36 42 62 50 C36 58 31 100 31 100 C31 100 26 58 0 50 C26 42 31 0 31 0Z" fill="#E6AC20"/>
+      </svg>
+      Luminosity Advising
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about" data-section="about">About</a></li>
+      <li><a href="#services" data-section="services">Services</a></li>
+      <li><a href="#writing" data-section="writing">Writing</a></li>
+      <li><a href="#contact" class="nav-cta">Get in touch</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="home">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-inner">
+      <div class="fade-up">
+        <h1>Every child deserves a <em>world-class</em> education, one filled with curiosity, meaningful challenges, and lasting relationships.</h1>
+        <p class="hero-sub">I partner with schools, nonprofits, and foundations working through big, gnarly questions, and I help shape decisions that improve outcomes for each and every young person.</p>
+        <div class="hero-actions">
+          <a href="#services" class="btn btn-gold">Explore services</a>
+          <a href="#contact" class="btn btn-ghost">Work with me</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="inner">
+      <p class="label fade-up">
+        <svg class="star-icon" viewBox="0 0 62 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M31 0 C31 0 36 42 62 50 C36 58 31 100 31 100 C31 100 26 58 0 50 C26 42 31 0 31 0Z" fill="#E6AC20"/>
+        </svg>
+        About
+      </p>
+      <div class="section-rule fade-up"></div>
+      <h2 class="section-title fade-up">Amy Chen Kulesa</h2>
+      <div class="about-grid">
+        <div class="photo-frame fade-left">
+          <img src="amy.jpg" alt="Amy Chen Kulesa" />
+        </div>
+        <div class="about-text fade-right">
+          <p>Amy Chen Kulesa is a strategic advisor who helps schools, nonprofits, and foundations make good decisions about artificial intelligence (AI), strategy, and organizational change.</p>
+          <p>Most recently, Amy launched and led the AI portfolio at <a href="https://bellwether.org/" target="_blank" rel="noopener" class="bio-link">Bellwether</a>, where she advised foundations, published research on AI in education, and worked directly with organizations deploying AI in their programs. She also partnered with organizations on strategic planning, growth, and continuous improvement efforts spanning instructional materials, professional learning, STEM education, charter schools, postsecondary and career pathways, early college, and whole-child approaches to student development.</p>
+          <p>Before Bellwether, Amy was the Director of Data and Analytics at <a href="https://www.bostonprep.org/" target="_blank" rel="noopener" class="bio-link">Boston Prep</a>, where she managed the school's data infrastructure and collaborated on a growth application that earned a state commissioner's recommendation for expansion. She started her career as a consultant at <a href="https://www.strategyand.pwc.com/" target="_blank" rel="noopener" class="bio-link">Booz &amp; Company</a>, advising Fortune 500 clients on operations strategy. She serves on the board of <a href="https://matchschool.org/" target="_blank" rel="noopener" class="bio-link">Match Charter Public School</a> and the AI Advisory Group for <a href="https://openscied.org/" target="_blank" rel="noopener" class="bio-link">OpenSciEd</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="inner">
+      <p class="label fade-up">
+        <svg class="star-icon" viewBox="0 0 62 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M31 0 C31 0 36 42 62 50 C36 58 31 100 31 100 C31 100 26 58 0 50 C26 42 31 0 31 0Z" fill="#E6AC20"/>
+        </svg>
+        Services
+      </p>
+      <div class="section-rule fade-up"></div>
+      <h2 class="section-title fade-up">How I can <em>help</em></h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-accent"></div>
+          <h3>AI Strategy &amp; Implementation</h3>
+          <p class="service-lead">AI is moving fast, and the organizations getting it right are the ones that approach it with both ambition and care. There's a lot to be hopeful about and a lot to be careful about. I try to hold both. I help organizations navigate the real constraints, ground in research evidence, and work through the messy middle.</p>
+          <p class="service-detail">This could include: assessing your organization's readiness, facilitating sessions to build a shared AI plan, designing convenings where stakeholders develop policy or practice together, helping your team build the skills and judgment to use AI well, or thinking through the design and implementation of specific tools and practices.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-accent"></div>
+          <h3>Strategic Advising</h3>
+          <p class="service-lead">The best decisions come from bringing the right questions, the right information, and the right people into the room. I work with schools, nonprofits, and foundations who are working through complexity, taking in different perspectives, stress-testing assumptions, and helping get to a clear answer they trust.</p>
+          <p class="service-detail">This could include: developing a strategic plan, facilitation of a planning process with your team, a structured engagement around a specific decision you're facing, or ongoing thought partnership.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-accent"></div>
+          <h3>Philanthropic Advising</h3>
+          <p class="service-lead">I work across the funding ecosystem: with foundations thinking through strategy and priorities, and with the organizations they fund who are navigating growth or change. I bring deep knowledge of how both sides of that relationship work, and what it actually takes to create change that sticks.</p>
+          <p class="service-detail">This could include: advising a foundation on portfolio strategy or grantmaking priorities, supporting a foundation launching work in a new area, helping funders think through how AI fits into their giving, working with a grantee organization to strengthen their strategy, or serving as a thought partner to a program officer or nonprofit leader navigating a complex moment.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-accent"></div>
+          <h3>Interim &amp; Fractional Leadership</h3>
+          <p class="service-lead">Not every leadership need requires a permanent hire. Sometimes organizations need an experienced leader for a defined window to cover a vacancy, own a growth or partnerships function, or keep a critical workstream moving while a longer-term plan comes together. I step into these roles with full ownership and accountability.</p>
+          <p class="service-detail">This could include: serving as a fractional leadership role during a transition or search, taking on a time-bound strategy role, acting as a fractional chief growth or partnerships officer for an early-stage organization that needs that function but isn't ready to hire for it full time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section id="writing">
+    <div class="inner">
+      <p class="label fade-up">
+        <svg class="star-icon" viewBox="0 0 62 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M31 0 C31 0 36 42 62 50 C36 58 31 100 31 100 C31 100 26 58 0 50 C26 42 31 0 31 0Z" fill="#E6AC20"/>
+        </svg>
+        Writing &amp; Engagements
+      </p>
+      <div class="section-rule fade-up"></div>
+      <h2 class="section-title fade-up">Selected <em>work</em></h2>
+
+      <div class="writing-list">
+
+        <a class="writing-item" href="https://bellwether.org/publications/productive-struggle/?activeTab=1" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">Bellwether</span>
+            </div>
+            <p class="writing-item-title">Productive Struggle: How Artificial Intelligence Is Changing Learning, Effort, and Youth Development in Education</p>
+            <p class="writing-desc">AI can make things easier for students, but easier isn't always better. This report examines when AI should reduce cognitive effort and when it shouldn't.</p>
+          </div>
+          <span class="writing-arrow">Read →</span>
+        </a>
+
+        <a class="writing-item" href="https://bellwether.org/publications/learning-systems/" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">Bellwether</span>
+            </div>
+            <p class="writing-item-title">Learning Systems: Shaping the Role of Artificial Intelligence in Education</p>
+            <p class="writing-desc">A three-part series on the AI landscape in education, the opportunities and challenges facing schools and developers, and concrete use cases for AI in education.</p>
+          </div>
+          <span class="writing-arrow">Read →</span>
+        </a>
+
+        <a class="writing-item" href="https://bellwether.org/publications/built-for-learning/" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">Bellwether</span>
+            </div>
+            <p class="writing-item-title">Built for Learning: Lessons From Emerging Artificial Intelligence Solutions and Approaches</p>
+            <p class="writing-desc">Case studies of education organizations using AI to amplify productive struggle and how they measure the impact of AI tools.</p>
+          </div>
+          <span class="writing-arrow">Read →</span>
+        </a>
+
+        <a class="writing-item" href="https://bellwether.org/publications/measuring-ai-in-education/?activeTab=1" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">Bellwether</span>
+            </div>
+            <p class="writing-item-title">Measuring Artificial Intelligence in Education</p>
+            <p class="writing-desc">Why measuring AI in education is hard, and how to do it better. Focuses on outcomes over outputs and using multiple metrics to capture what matters.</p>
+          </div>
+          <span class="writing-arrow">Read →</span>
+        </a>
+
+        <a class="writing-item" href="https://bellwether.org/publications/building-ai-readiness/?activeTab=1" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">Bellwether &amp; aiEDU</span>
+            </div>
+            <p class="writing-item-title">Building AI Readiness: Actionable K-12 Insights and Investment Pathways</p>
+            <p class="writing-desc">In partnership with aiEDU, a practical guide for funders and school systems thinking about where to invest in AI.</p>
+          </div>
+          <span class="writing-arrow">Read →</span>
+        </a>
+
+        <a class="writing-item" href="https://bellwether.org/blog/make-ai-work-for-everyone/" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">Bellwether</span>
+            </div>
+            <p class="writing-item-title">Make AI Work for Everyone: Underrepresented Students Shouldn't Be Left Behind</p>
+            <p class="writing-desc">An op-ed on the opportunities and risks of AI in education.</p>
+          </div>
+          <span class="writing-arrow">Read →</span>
+        </a>
+
+        <a class="writing-item" href="https://fordhaminstitute.org/national/commentary/reimagined-ai-can-be-catalyst-more-learner-centered-system-education-if-done" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">Fordham Institute</span>
+            </div>
+            <p class="writing-item-title">Reimagined: AI Can Be a Catalyst for a More Learner-Centered System of Education, If Done Right</p>
+            <p class="writing-desc">Winner of the 2023 Wonkathon: How can we harness the power but mitigate the risks of artificial intelligence in our schools?</p>
+          </div>
+          <span class="writing-arrow">Read →</span>
+        </a>
+
+        <a class="writing-item" href="https://schedule.sxswedu.com/2025/events/PP153309" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">SXSW EDU</span>
+            </div>
+            <p class="writing-item-title">AI in Action: Innovative Approaches in Schools &amp; Districts</p>
+            <p class="writing-desc">SXSW EDU 2025 panelist sharing innovative practices across district, charter, and private schools.</p>
+          </div>
+          <span class="writing-arrow">View →</span>
+        </a>
+
+        <a class="writing-item" href="https://www.parseceducation.com/podcast/guest-amy-chen-kulesa/" target="_blank" rel="noopener">
+          <div>
+            <div class="writing-item-meta">
+              <span class="writing-pub">Parsec Education: The Rachael Maves Podcast</span>
+            </div>
+            <p class="writing-item-title">AI in Education with Amy Chen Kulesa</p>
+            <p class="writing-desc">Podcast with Rachael Maves on AI in education.</p>
+          </div>
+          <span class="writing-arrow">Listen →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="inner">
+      <p class="label fade-up">
+        <svg class="star-icon" viewBox="0 0 62 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M31 0 C31 0 36 42 62 50 C36 58 31 100 31 100 C31 100 26 58 0 50 C26 42 31 0 31 0Z" fill="#F0BE3A"/>
+        </svg>
+        Contact
+      </p>
+      <div class="section-rule fade-up"></div>
+      <h2 class="section-title fade-up">Let's <em>talk</em></h2>
+      <p class="contact-body fade-up">Whether you're working through a strategic challenge, looking for a thought partner on AI, or exploring what working together might look like, I'd love to hear from you.</p>
+      <div class="contact-icons fade-up">
+        <a href="mailto:amy@luminosityadvising.com" class="contact-icon-link" aria-label="Email Amy">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M2 7l10 7 10-7"/>
+          </svg>
+        </a>
+        <a href="https://www.linkedin.com/in/amychenkulesa/" target="_blank" rel="noopener" class="contact-icon-link" aria-label="Amy on LinkedIn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="foot-logo">
+      <svg class="star-icon" viewBox="0 0 62 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M31 0 C31 0 36 42 62 50 C36 58 31 100 31 100 C31 100 26 58 0 50 C26 42 31 0 31 0Z" fill="#E6AC20"/>
+      </svg>
+      Luminosity Advising
+    </span>
+    <span class="foot-copy">&copy; 2026 Amy Chen Kulesa &nbsp;·&nbsp; All rights reserved</span>
+  </footer>
+
+  <script>
+    /* NAV SCROLL SHADOW */
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    /* ACTIVE NAV ON SCROLL */
+    const sections = ['about', 'services', 'writing', 'contact'];
+    const navLinks = document.querySelectorAll('.nav-links a[data-section]');
+
+    function updateActiveNav() {
+      let current = '';
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 120) current = id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('nav-active', a.dataset.section === current);
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+    /* INTERSECTION OBSERVER */
+    const animObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          animObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up, .fade-left, .fade-right, .section-rule').forEach(el => animObs.observe(el));
+
+    /* SERVICE CARDS staggered */
+    const cardObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.service-card').forEach((c, i) => {
+            setTimeout(() => c.classList.add('visible'), i * 120);
+          });
+          cardObs.disconnect();
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const servicesGrid = document.querySelector('.services-grid');
+    if (servicesGrid) cardObs.observe(servicesGrid);
+
+    /* WRITING ITEMS staggered */
+    const writingObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.writing-item').forEach((c, i) => {
+            setTimeout(() => c.classList.add('visible'), i * 70);
+          });
+          writingObs.disconnect();
+        }
+      });
+    }, { threshold: 0.05 });
+
+    const writingList = document.querySelector('.writing-list');
+    if (writingList) writingObs.observe(writingList);
+
+    /* HERO CANVAS */
+    (function () {
+      const canvas = document.getElementById('hero-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles;
+      const mouse = { x: -9999, y: -9999 };
+
+      function resize() {
+        const section = document.getElementById('home');
+        W = canvas.width = section.offsetWidth;
+        H = canvas.height = section.offsetHeight;
+      }
+
+      function star4Path(x, y, outer, inner) {
+        ctx.beginPath();
+        for (let i = 0; i < 8; i++) {
+          const angle = (i * Math.PI) / 4 - Math.PI / 2;
+          const r = i % 2 === 0 ? outer : inner;
+          i === 0 ? ctx.moveTo(x + Math.cos(angle) * r, y + Math.sin(angle) * r)
+                  : ctx.lineTo(x + Math.cos(angle) * r, y + Math.sin(angle) * r);
+        }
+        ctx.closePath();
+      }
+
+      function makeParticle() {
+        const isStar = Math.random() < 0.15;
+        return {
+          x: Math.random() * W, y: Math.random() * H,
+          size: isStar ? Math.random() * 4 + 2 : Math.random() * 1.5 + 0.4,
+          isStar,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          baseAlpha: Math.random() * 0.5 + 0.35,
+          phase: Math.random() * Math.PI * 2,
+          freq: Math.random() * 0.025 + 0.008,
+        };
+      }
+
+      function init() { resize(); particles = Array.from({ length: 130 }, makeParticle); }
+
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 140) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(230,172,32,${0.28 * (1 - d / 140)})`;
+              ctx.lineWidth = 0.8;
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        particles.forEach(p => {
+          p.phase += p.freq;
+          const pulse = 0.75 + 0.25 * Math.sin(p.phase);
+          const alpha = p.baseAlpha * pulse;
+          const dx = p.x - mouse.x, dy = p.y - mouse.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < 110 && d > 0) { p.vx += (dx / d) * 0.18; p.vy += (dy / d) * 0.18; }
+          p.vx *= 0.97; p.vy *= 0.97;
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < -10) p.x = W + 10;
+          if (p.x > W + 10) p.x = -10;
+          if (p.y < -10) p.y = H + 10;
+          if (p.y > H + 10) p.y = -10;
+
+          if (p.isStar) {
+            const outer = p.size * pulse;
+            star4Path(p.x, p.y, outer, outer * 0.3);
+            ctx.fillStyle = `rgba(230,172,32,${alpha * 1.5})`;
+            ctx.fill();
+          } else {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,255,255,${alpha * 1.2})`;
+            ctx.fill();
+          }
+        });
+
+        requestAnimationFrame(tick);
+      }
+
+      window.addEventListener('resize', resize);
+      document.getElementById('home').addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+      });
+      document.getElementById('home').addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+      init();
+      tick();
+    })();
+  </script>
+</body>
+</html>
